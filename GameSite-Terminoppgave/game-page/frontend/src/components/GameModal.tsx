@@ -1,5 +1,15 @@
-// src/GameModal.tsx
 import React, { useState } from 'react';
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Button,
+    Typography,
+    List,
+    ListItem,
+} from '@mui/material';
 
 interface Game {
     id: number;
@@ -28,43 +38,53 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <h2>{game.name}</h2>
-                <p>Likes: {game.likes}</p>
-                <p>Downloads: {game.downloads}</p>
+        <Dialog open onClose={onClose}>
+            <DialogTitle>{game.name}</DialogTitle>
+            <DialogContent>
+                <Typography variant="body1">Likes: {game.likes}</Typography>
+                <Typography variant="body1">Downloads: {game.downloads}</Typography>
 
-                {/* Like and Download buttons */}
-                <div className="action-buttons">
-                    <button onClick={onLike} className="like-button">
-                        {game.likes ? '❤️' : '🤍'} {/* Filled or empty heart based on likes */}
-                    </button>
-                    <button onClick={onDownload} className="download-button">Download</button>
+                {/* Action buttons */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <Button variant="contained" color="primary" onClick={onLike}>
+                        {game.likes > 0 ? '❤️' : '🤍'} {/* Filled or empty heart based on likes */}
+                    </Button>
+                    <Button variant="contained" color="secondary" onClick={onDownload}>
+                        Download
+                    </Button>
                 </div>
 
                 {/* Comment input area */}
-                <div className="comment-section">
-                    <textarea
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        placeholder="Enter your comment..."
-                    />
-                    <button onClick={handleCommentSubmit}>Comment</button>
-                </div>
+                <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    variant="outlined"
+                    placeholder="Enter your comment..."
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    margin="normal"
+                />
+                <Button variant="contained" color="primary" onClick={handleCommentSubmit}>
+                    Comment
+                </Button>
 
                 {/* Comments display */}
-                <div className="comments-display">
-                    <h3>Comments:</h3>
-                    <ul>
-                        {game.comments.slice().reverse().map((c, index) => ( // Reverse order for newest comments on top
-                            <li key={index}>{c}</li>
-                        ))}
-                    </ul>
-                </div>
-
-                <button onClick={onClose} className="close-button">Close</button>
-            </div>
-        </div>
+                <Typography variant="h6" style={{ marginTop: '16px' }}>Comments:</Typography>
+                <List>
+                    {game.comments.slice().reverse().map((c, index) => ( // Reverse order for newest comments on top
+                        <ListItem key={index}>
+                            <Typography>{c}</Typography>
+                        </ListItem>
+                    ))}
+                </List>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    Close
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 

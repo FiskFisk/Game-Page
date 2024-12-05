@@ -19,7 +19,7 @@ const GameList: React.FC = () => {
 
     const fetchGames = async () => {
         try {
-            const response = await axios.get('http://10.2.3.46:5000/api/games');
+            const response = await axios.get('http://10.2.3.46:5000/api/games'); // Ensure this URL is correct
             setGames(response.data);
             setError(null); // Clear previous errors
         } catch (error) {
@@ -36,7 +36,7 @@ const GameList: React.FC = () => {
 
     const likeGame = async (id: number) => {
         try {
-            const response = await axios.post(`http://10.2.3.46:5000/api/games/${id}/like`);
+            const response = await axios.post(`http://10.2.3.46:5000/api/games/${id}/like`); // Ensure this URL is correct
             if (response.status !== 200) {
                 throw new Error('Failed to like the game');
             }
@@ -49,7 +49,7 @@ const GameList: React.FC = () => {
 
     const downloadGame = async (id: number) => {
         try {
-            const response = await axios.post(`http://10.2.3.46:5000/api/games/${id}/download`);
+            const response = await axios.post(`http://10.2.3.46:5000/api/games/${id}/download`); // Ensure this URL is correct
             if (response.status !== 200) {
                 throw new Error('Failed to download the game');
             }
@@ -62,7 +62,7 @@ const GameList: React.FC = () => {
 
     const commentGame = async (id: number, comment: string) => {
         try {
-            const response = await axios.post(`http://10.2.3.46:5000/api/games/${id}/comments`, { comment });
+            const response = await axios.post(`http://10.2.3.46:5000/api/games/${id}/comments`, { comment }); // Ensure this URL is correct
             if (response.status !== 200) {
                 throw new Error('Failed to add comment');
             }

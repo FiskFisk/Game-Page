@@ -1,12 +1,23 @@
-// src/App.tsx
-import React from 'react';
+// src/components/App.tsx
+import React, { useState } from 'react';
 import GameList from './GameList';
-import './App.css';  // Import the CSS file
+import AuthPanel from './AuthPanel';
+import './App.css';
 
 const App: React.FC = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    const handleLogin = () => {
+        setIsAuthenticated(true);
+    };
+
     return (
         <div>
-            <GameList />
+            {!isAuthenticated ? (
+                <AuthPanel onLogin={handleLogin} />
+            ) : (
+                <GameList />
+            )}
         </div>
     );
 };

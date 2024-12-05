@@ -38,7 +38,7 @@ def register():
     password = request.json.get('password')
 
     if not username or not email or not password:
-        return jsonify({"message": "Missing fields!"}), 400
+        return jsonify({"message": "All fields are required!"}), 400
 
     if User.query.filter((User.username == username) | (User.email == email)).first():
         return jsonify({"message": "User already exists!"}), 409
@@ -48,19 +48,19 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"message": "User registered successfully!"}), 201
+    return jsonify({"message": "User registered successfully!", "username": new_user.username}), 201
 
 # Route to login a user
 @app.route('/api/login', methods=['POST'])
 def login():
-    username = request.json.get('username')
+    email = request.json.get('email')  # Changed to email
     password = request.json.get('password')
 
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(email=email).first()  # Authenticate by email
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
         session['user_id'] = user.id
-        return jsonify({"message": "Login successful!"}), 200
+        return jsonify({"message": "Login successful!", "username": user.username}), 200
     
     return jsonify({"message": "Invalid credentials!"}), 401
 

@@ -1,14 +1,31 @@
-// src/AuthPanel.tsx (Modified to include email for login)
 import React, { useState } from 'react';
+import { TextField, Button, Typography, Container, Box, Snackbar, Alert, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material'; // Import icons
 import axios from 'axios';
-import { TextField, Button, Typography } from '@mui/material';
 
-const AuthPanel: React.FC = () => {
+const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
+    const [isRegistering, setIsRegistering] = useState(false);
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState(''); // Added email state
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
-    const [isRegistering, setIsRegistering] = useState(true);
+    const [error, setError] = useState('');
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post('http://10.2.3.46:5000/api/login', {
+                email,
+                password,
+            });
+            if (response.status === 200) {
+                onLogin(); // Call onLogin prop to update authentication state
+            }
+        } catch (error) {
+            setError('Invalid credentials. Please try again.');
+            setOpenSnackbar(true); // Show error message in Snackbar
+        }
+    };
 
     const handleRegister = async () => {
         try {
@@ -17,104 +34,119 @@ const AuthPanel: React.FC = () => {
                 email,
                 password,
             });
-            setMessage(response.data.message);
-            setUsername('');
-            setEmail('');
-            setPassword('');
-        } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                setMessage(error.response.data.message || 'Registration failed!');
-            } else {
-                setMessage('Registration failed!');
+            if (response.status === 201) {
+                setIsRegistering(false); // Switch to login after registration
             }
+        } catch (error) {
+            setError('Registration failed. Please try again.');
+            setOpenSnackbar(true); // Show error message in Snackbar
         }
     };
 
-    const handleLogin = async () => {
-        try {
-            const response = await axios.post('http://10.2.3.46:5000/api/login', {
-                username,
-                password,
-            });
-            setMessage(response.data.message);
-            setUsername('');
-            setPassword('');
-            // Redirect to the games page or fetch user info if needed
-        } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                setMessage(error.response.data.message || 'Login failed!');
-            } else {
-                setMessage('Login failed!');
-            }
-        }
-    };
-
-    const toggleRegisterLogin = () => {
-        setIsRegistering(!isRegistering);
-        setMessage('');
-        setUsername('');
-        setEmail(''); // Clear email if switching to login
-        setPassword('');
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
     };
 
     return (
-        <div>
-            <Typography variant="h4">{isRegistering ? 'Register' : 'Login'}</Typography>
-            {message && <div>{message}</div>}
-            {isRegistering && (
-                <TextField
-                    label="Username"
-                    variant="outlined"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-            )}
-            {isRegistering && (
-                <TextField
-                    label="Email"
-                    variant="outlined"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-            )}
-            {!isRegistering && ( // Show email field only in registration
-                <TextField
-                    label="Email"
-                    variant="outlined"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-            )}
-            <TextField
-                label="Password"
-                variant="outlined"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                fullWidth
-                margin="normal"
-            />
-            {isRegistering ? (
-                <Button variant="contained" color="primary" onClick={handleRegister}>
-                    Register
-                </Button>
-            ) : (
-                <Button variant="contained" color="primary" onClick={handleLogin}>
-                    Login
-                </Button>
-            )}
-            <Button onClick={toggleRegisterLogin}>
-                {isRegistering ? 'Already have an account? Login' : 'Don\'t have an account? Register'}
-            </Button>
-        </div>
+        <Container component="main" maxWidth="xs">
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 8 }}>
+                <Typography component="h1" variant="h5">
+                    {isRegistering ? 'Register' : 'Login'}
+                </Typography>
+                <Box sx={{ mt: 1 }}>
+                    {error && <Typography color="error">{error}</Typography>}
+                    {isRegistering ? (
+                        <>
+                            <TextField
+                                label="Username"
+                                variant="outlined"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                label="Email"
+                                type="email"
+                                variant="outlined"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                label="Password"
+                                type={showPassword ? 'text' : 'password'} // Toggle between text and password
+                                variant="outlined"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                                InputProps={{
+                                    endAdornment: (
+                                        <IconButton
+                                            onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    ),
+                                }}
+                            />
+                            <Button variant="contained" color="primary" onClick={handleRegister} fullWidth sx={{ mt: 2 }}>
+                                Register
+                            </Button>
+                            <Button onClick={() => setIsRegistering(false)} fullWidth sx={{ mt: 1 }}>
+                                Already have an account? Login
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <TextField
+                                label="Email"
+                                type="email"
+                                variant="outlined"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                label="Password"
+                                type={showPassword ? 'text' : 'password'} // Toggle between text and password
+                                variant="outlined"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                                InputProps={{
+                                    endAdornment: (
+                                        <IconButton
+                                            onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    ),
+                                }}
+                            />
+                            <Button variant="contained" color="primary" onClick={handleLogin} fullWidth sx={{ mt: 2 }}>
+                                Login
+                            </Button>
+                            <Button onClick={() => setIsRegistering(true)} fullWidth sx={{ mt: 1 }}>
+                                Don't have an account? Register
+                            </Button>
+                        </>
+                    )}
+                </Box>
+            </Box>
+
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+                    {error}
+                </Alert>
+            </Snackbar>
+        </Container>
     );
 };
 
