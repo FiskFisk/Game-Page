@@ -1,4 +1,3 @@
-// src/components/App.tsx
 import React, { useState } from 'react';
 import GameList from './GameList';
 import AuthPanel from './AuthPanel';
@@ -6,9 +5,11 @@ import './App.css';
 
 const App: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [username, setUsername] = useState<string | null>(null); // State to track username
 
-    const handleLogin = () => {
+    const handleLogin = (loggedInUsername: string) => {
         setIsAuthenticated(true);
+        setUsername(loggedInUsername); // Store the logged-in username
     };
 
     return (
@@ -16,7 +17,12 @@ const App: React.FC = () => {
             {!isAuthenticated ? (
                 <AuthPanel onLogin={handleLogin} />
             ) : (
-                <GameList />
+                <>
+                    <header className="app-header">
+                        <div className="user-info"> {username}</div>
+                    </header>
+                    <GameList />
+                </>
             )}
         </div>
     );

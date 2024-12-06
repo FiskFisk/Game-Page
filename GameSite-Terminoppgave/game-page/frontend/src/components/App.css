@@ -1,149 +1,205 @@
-/* src/App.css */
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  margin: 20px 0;
+  color: #333;
+}
+
+/* User Info Styles */
+.user-info {
+  position: absolute; /* Positioned relative to the viewport */
+  top: 10px; /* 10px from the top of the viewport */
+  right: 20px; /* 20px from the right of the viewport */
+  font-size: 18px; /* Slightly larger font size */
+  font-weight: bold; /* Make it stand out */
+  color: #007BFF; /* Bootstrap primary color for visibility */
+  background: #fff; /* Optional: Light background for contrast */
+  padding: 5px 10px; /* Padding around the text */
+  border-radius: 8px; /* Rounded corners for a modern look */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  z-index: 1000; /* Ensures it stays on top */
+}
 
 /* Game Boxes Styles */
 .game-boxes {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  margin: 20px 0;
+  justify-content: center; /* Center alignment for boxes */
+  gap: 20px; /* Consistent spacing between boxes */
+  padding: 20px;
 }
 
 .game-box {
-  background: #f9f9f9;
+  background: #fff;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 20px;
-  margin: 10px;
-  width: 200px;
+  width: 250px; /* Increased width for better display */
+  text-align: center;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .game-box:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Modal and Overlay Styles */
+.game-box h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #007BFF; /* Highlight game titles */
+}
+
+.game-box p {
+  margin: 5px 0;
+  color: #555;
+}
+
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7); /* Darker overlay for better contrast */
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .modal-content {
-  background: white;
+  background: #fff;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow for depth */
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   width: 400px;
   position: relative;
+  text-align: left;
 }
 
 /* Action Buttons */
 .action-buttons {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.like-button,
+.download-button {
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .like-button {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
+  background: #ff4d4d;
+  color: white;
+}
+
+.like-button:hover {
+  background: #e63939;
+  transform: translateY(-2px);
 }
 
 .download-button {
-  padding: 8px 12px;
-  background-color: #007BFF; /* Bootstrap primary color */
+  background-color: #007BFF;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 .download-button:hover {
-  background-color: #0056b3; /* Darker shade on hover */
+  background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
 /* Comment Section */
 .comment-section {
   display: flex;
-  margin-bottom: 15px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 10px; /* Consistent spacing */
 }
 
 .comment-section textarea {
-  width: 80%;
-  height: 50px;
-  margin-right: 10px;
-  border-radius: 4px;
+  width: 100%;
+  height: 60px;
   border: 1px solid #ddd;
-  padding: 5px;
-  font-size: 14px; /* Consistent font size */
-  resize: none; /* Disable resizing */
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 14px;
+  resize: none;
 }
 
 .comment-section button {
-  padding: 8px 12px;
-  background-color: #28a745; /* Bootstrap success color */
+  padding: 10px 15px;
+  background-color: #28a745;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .comment-section button:hover {
-  background-color: #218838; /* Darker shade on hover */
+  background-color: #218838;
+  transform: translateY(-2px);
 }
 
 /* Comments Display */
 .comments-display {
-  max-height: 150px;
-  overflow-y: auto; /* Adds scroll functionality */
+  max-height: 200px; /* Increased height for better visibility */
+  overflow-y: auto;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 5px;
-  margin-top: 10px;
-  background: #f9f9f9; /* Light background for comments */
+  border-radius: 5px;
+  padding: 10px;
+  background: #f9f9f9;
 }
 
 .comments-display ul {
-  list-style-type: none; /* Remove bullet points */
-  padding: 0; /* Remove padding */
-  margin: 0; /* Remove margin */
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .comments-display li {
-  padding: 5px;
-  border-bottom: 1px solid #eee; /* Light border between comments */
+  padding: 8px;
+  border-bottom: 1px solid #eee;
 }
 
 .comments-display li:last-child {
-  border-bottom: none; /* Remove border for the last comment */
+  border-bottom: none;
+}
+
+.comments-display li:hover {
+  background: #f1f1f1;
 }
 
 /* Close Button */
 .close-button {
-  padding: 8px 12px;
-  background-color: #dc3545; /* Bootstrap danger color */
+  padding: 10px 20px;
+  background-color: #dc3545;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .close-button:hover {
-  background-color: #c82333; /* Darker shade on hover */
+  background-color: #c82333;
+  transform: translateY(-2px);
 }
 
 /* Auth Panel Styles */
@@ -152,24 +208,50 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 20px;
+  padding: 20px;
 }
 
 .auth-panel form {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 400px;
 }
 
 .auth-panel input {
-  margin: 10px 0;
+  margin-bottom: 15px;
   padding: 10px;
-  width: 300px;
+  width: 100%;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
+.auth-panel button {
+  padding: 10px 15px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.auth-panel button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Error and Success Messages */
 .error-message {
   color: red;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 .success-message {
   color: green;
+  margin-bottom: 15px;
+  text-align: center;
 }

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Container, Box, Snackbar, Alert, IconButton } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material'; // Import icons
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import axios from 'axios';
 
-const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
+const AuthPanel: React.FC<{ onLogin: (username: string) => void }> = ({ onLogin }) => {
     const [isRegistering, setIsRegistering] = useState(false);
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async () => {
         try {
@@ -19,11 +19,12 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                 password,
             });
             if (response.status === 200) {
-                onLogin(); // Call onLogin prop to update authentication state
+                const { username } = response.data; // Expect username from server response
+                onLogin(username); // Pass the username to App
             }
-        } catch (error) {
+        } catch (err) {
             setError('Invalid credentials. Please try again.');
-            setOpenSnackbar(true); // Show error message in Snackbar
+            setOpenSnackbar(true);
         }
     };
 
@@ -35,11 +36,13 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                 password,
             });
             if (response.status === 201) {
-                setIsRegistering(false); // Switch to login after registration
+                setIsRegistering(false); // Switch back to login
+                setError('Registration successful! Please log in.');
+                setOpenSnackbar(true);
             }
-        } catch (error) {
-            setError('Registration failed. Please try again.');
-            setOpenSnackbar(true); // Show error message in Snackbar
+        } catch (err) {
+            setError('Registration failed. Please check your details and try again.');
+            setOpenSnackbar(true);
         }
     };
 
@@ -54,7 +57,6 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                     {isRegistering ? 'Register' : 'Login'}
                 </Typography>
                 <Box sx={{ mt: 1 }}>
-                    {error && <Typography color="error">{error}</Typography>}
                     {isRegistering ? (
                         <>
                             <TextField
@@ -76,7 +78,7 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                             />
                             <TextField
                                 label="Password"
-                                type={showPassword ? 'text' : 'password'} // Toggle between text and password
+                                type={showPassword ? 'text' : 'password'}
                                 variant="outlined"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -85,7 +87,7 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                                 InputProps={{
                                     endAdornment: (
                                         <IconButton
-                                            onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+                                            onClick={() => setShowPassword(!showPassword)}
                                             edge="end"
                                         >
                                             {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -93,7 +95,13 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                                     ),
                                 }}
                             />
-                            <Button variant="contained" color="primary" onClick={handleRegister} fullWidth sx={{ mt: 2 }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleRegister}
+                                fullWidth
+                                sx={{ mt: 2 }}
+                            >
                                 Register
                             </Button>
                             <Button onClick={() => setIsRegistering(false)} fullWidth sx={{ mt: 1 }}>
@@ -113,7 +121,7 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                             />
                             <TextField
                                 label="Password"
-                                type={showPassword ? 'text' : 'password'} // Toggle between text and password
+                                type={showPassword ? 'text' : 'password'}
                                 variant="outlined"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -122,7 +130,7 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                                 InputProps={{
                                     endAdornment: (
                                         <IconButton
-                                            onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+                                            onClick={() => setShowPassword(!showPassword)}
                                             edge="end"
                                         >
                                             {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -130,7 +138,13 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                                     ),
                                 }}
                             />
-                            <Button variant="contained" color="primary" onClick={handleLogin} fullWidth sx={{ mt: 2 }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleLogin}
+                                fullWidth
+                                sx={{ mt: 2 }}
+                            >
                                 Login
                             </Button>
                             <Button onClick={() => setIsRegistering(true)} fullWidth sx={{ mt: 1 }}>
@@ -142,7 +156,7 @@ const AuthPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
             </Box>
 
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+                <Alert onClose={handleCloseSnackbar} severity={error.includes('successful') ? 'success' : 'error'} sx={{ width: '100%' }}>
                     {error}
                 </Alert>
             </Snackbar>

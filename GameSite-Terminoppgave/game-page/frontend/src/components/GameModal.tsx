@@ -89,3 +89,4 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
 };
 
 export default GameModal;
+

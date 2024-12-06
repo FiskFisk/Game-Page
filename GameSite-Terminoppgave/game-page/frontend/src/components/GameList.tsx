@@ -1,4 +1,3 @@
-// src/GameList.tsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import GameModal from './GameModal';
@@ -15,16 +14,16 @@ const GameList: React.FC = () => {
     const [games, setGames] = useState<Game[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-    const [error, setError] = useState<string | null>(null); // State for error messages
+    const [error, setError] = useState<string | null>(null);
 
     const fetchGames = async () => {
         try {
-            const response = await axios.get('http://10.2.3.46:5000/api/games'); // Ensure this URL is correct
+            const response = await axios.get('http://10.2.3.46:5000/api/games');
             setGames(response.data);
-            setError(null); // Clear previous errors
-        } catch (error) {
-            console.error('Error fetching games:', error);
-            setError('Failed to fetch games. Please try again later.'); // User-friendly error message
+            setError(null); // Clear any previous error
+        } catch (err) {
+            console.error('Error fetching games:', err);
+            setError('Failed to fetch games. Please try again later.');
         } finally {
             setLoading(false);
         }
@@ -34,52 +33,33 @@ const GameList: React.FC = () => {
         fetchGames();
     }, []);
 
-    const likeGame = async (id: number) => {
+    const handleGameAction = async (
+        action: 'like' | 'download' | 'comment',
+        id: number,
+        comment?: string
+    ) => {
         try {
-            const response = await axios.post(`http://10.2.3.46:5000/api/games/${id}/like`); // Ensure this URL is correct
+            const url =
+                action === 'comment'
+                    ? `http://10.2.3.46:5000/api/games/${id}/comments`
+                    : `http://10.2.3.46:5000/api/games/${id}/${action}`;
+            const payload = action === 'comment' ? { comment } : {};
+            const response = await axios.post(url, payload);
+
             if (response.status !== 200) {
-                throw new Error('Failed to like the game');
+                throw new Error(`Failed to ${action} the game`);
             }
+
             fetchGames(); // Refresh the game list
-        } catch (error) {
-            console.error('Error liking the game:', error);
-            setError('Failed to like the game. Please try again.'); // User-friendly error message
+        } catch (err) {
+            console.error(`Error handling ${action} action:`, err);
+            setError(`Failed to ${action} the game. Please try again.`);
         }
     };
 
-    const downloadGame = async (id: number) => {
-        try {
-            const response = await axios.post(`http://10.2.3.46:5000/api/games/${id}/download`); // Ensure this URL is correct
-            if (response.status !== 200) {
-                throw new Error('Failed to download the game');
-            }
-            fetchGames(); // Refresh the game list
-        } catch (error) {
-            console.error('Error downloading the game:', error);
-            setError('Failed to download the game. Please try again.'); // User-friendly error message
-        }
-    };
+    const openModal = (game: Game) => setSelectedGame(game);
 
-    const commentGame = async (id: number, comment: string) => {
-        try {
-            const response = await axios.post(`http://10.2.3.46:5000/api/games/${id}/comments`, { comment }); // Ensure this URL is correct
-            if (response.status !== 200) {
-                throw new Error('Failed to add comment');
-            }
-            fetchGames(); // Refresh the game list
-        } catch (error) {
-            console.error('Error commenting on the game:', error);
-            setError('Failed to add comment. Please try again.'); // User-friendly error message
-        }
-    };
-
-    const openModal = (game: Game) => {
-        setSelectedGame(game);
-    };
-
-    const closeModal = () => {
-        setSelectedGame(null);
-    };
+    const closeModal = () => setSelectedGame(null);
 
     if (loading) {
         return <div>Loading...</div>; // Loading state
@@ -88,10 +68,17 @@ const GameList: React.FC = () => {
     return (
         <div className="game-list">
             <h1>Games</h1>
-            {error && <div className="error-message">{error}</div>} {/* Display error message if it exists */}
+            {error && <div className="error-message">{error}</div>} {/* Error message */}
             <div className="game-boxes">
                 {games.map((game) => (
-                    <div key={game.id} className="game-box" onClick={() => openModal(game)}>
+                    <div
+                        key={game.id}
+                        className="game-box"
+                        onClick={() => openModal(game)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && openModal(game)} // Accessibility improvement
+                    >
                         <h2>{game.name}</h2>
                         <p>Likes: {game.likes}</p>
                         <p>Downloads: {game.downloads}</p>
@@ -103,15 +90,15 @@ const GameList: React.FC = () => {
                     game={selectedGame}
                     onClose={closeModal}
                     onLike={() => {
-                        likeGame(selectedGame.id);
+                        handleGameAction('like', selectedGame.id);
                         closeModal();
                     }}
                     onDownload={() => {
-                        downloadGame(selectedGame.id);
+                        handleGameAction('download', selectedGame.id);
                         closeModal();
                     }}
                     onComment={(comment: string) => {
-                        commentGame(selectedGame.id, comment);
+                        handleGameAction('comment', selectedGame.id, comment);
                         closeModal();
                     }}
                 />
