@@ -17,6 +17,7 @@ interface Game {
     likes: number;
     downloads: number;
     comments: string[];
+    liked: boolean; // Track whether the user liked the game
 }
 
 interface GameModalProps {
@@ -33,7 +34,7 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
     const handleCommentSubmit = () => {
         if (comment.trim()) {
             onComment(comment);
-            setComment(''); // Clear the input after submitting
+            setComment('');
         }
     };
 
@@ -47,7 +48,7 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
                 {/* Action buttons */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <Button variant="contained" color="primary" onClick={onLike}>
-                        {game.likes > 0 ? '❤️' : '🤍'} {/* Filled or empty heart based on likes */}
+                        {game.liked ? '❤️' : '🤍'} {/* Filled or empty heart based on likes */}
                     </Button>
                     <Button variant="contained" color="secondary" onClick={onDownload}>
                         Download
@@ -72,7 +73,7 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
                 {/* Comments display */}
                 <Typography variant="h6" style={{ marginTop: '16px' }}>Comments:</Typography>
                 <List>
-                    {game.comments.slice().reverse().map((c, index) => ( // Reverse order for newest comments on top
+                    {game.comments.slice().reverse().map((c, index) => (
                         <ListItem key={index}>
                             <Typography>{c}</Typography>
                         </ListItem>
@@ -89,4 +90,3 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
 };
 
 export default GameModal;
-

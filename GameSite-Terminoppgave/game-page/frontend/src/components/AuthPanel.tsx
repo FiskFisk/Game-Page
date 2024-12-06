@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Container, Box, Snackbar, Alert, IconButton } from '@mui/material';
+import { TextField, Button, Typography, Container, Box, Snackbar, Alert, IconButton, CircularProgress } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import axios from 'axios';
 
@@ -11,13 +11,15 @@ const AuthPanel: React.FC<{ onLogin: (username: string) => void }> = ({ onLogin 
     const [error, setError] = useState('');
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false); // Loading state
 
     const handleLogin = async () => {
+        setLoading(true); // Set loading to true
         try {
             const response = await axios.post('http://10.2.3.46:5000/api/login', {
                 email,
                 password,
-            });
+            }, { withCredentials: true }); // Include withCredentials
             if (response.status === 200) {
                 const { username } = response.data; // Expect username from server response
                 onLogin(username); // Pass the username to App
@@ -25,16 +27,19 @@ const AuthPanel: React.FC<{ onLogin: (username: string) => void }> = ({ onLogin 
         } catch (err) {
             setError('Invalid credentials. Please try again.');
             setOpenSnackbar(true);
+        } finally {
+            setLoading(false); // Reset loading state
         }
     };
 
     const handleRegister = async () => {
+        setLoading(true); // Set loading to true
         try {
             const response = await axios.post('http://10.2.3.46:5000/api/register', {
                 username,
                 email,
                 password,
-            });
+            }, { withCredentials: true }); // Include withCredentials
             if (response.status === 201) {
                 setIsRegistering(false); // Switch back to login
                 setError('Registration successful! Please log in.');
@@ -43,6 +48,8 @@ const AuthPanel: React.FC<{ onLogin: (username: string) => void }> = ({ onLogin 
         } catch (err) {
             setError('Registration failed. Please check your details and try again.');
             setOpenSnackbar(true);
+        } finally {
+            setLoading(false); // Reset loading state
         }
     };
 
@@ -101,8 +108,9 @@ const AuthPanel: React.FC<{ onLogin: (username: string) => void }> = ({ onLogin 
                                 onClick={handleRegister}
                                 fullWidth
                                 sx={{ mt: 2 }}
+                                disabled={loading} // Disable button while loading
                             >
-                                Register
+                                {loading ? <CircularProgress size={24} /> : 'Register'}
                             </Button>
                             <Button onClick={() => setIsRegistering(false)} fullWidth sx={{ mt: 1 }}>
                                 Already have an account? Login
@@ -144,8 +152,9 @@ const AuthPanel: React.FC<{ onLogin: (username: string) => void }> = ({ onLogin 
                                 onClick={handleLogin}
                                 fullWidth
                                 sx={{ mt: 2 }}
+                                disabled={loading} // Disable button while loading
                             >
-                                Login
+                                {loading ? <CircularProgress size={24} /> : 'Login'}
                             </Button>
                             <Button onClick={() => setIsRegistering(true)} fullWidth sx={{ mt: 1 }}>
                                 Don't have an account? Register

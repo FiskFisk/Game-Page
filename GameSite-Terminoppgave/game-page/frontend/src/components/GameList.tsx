@@ -8,6 +8,7 @@ interface Game {
     likes: number;
     downloads: number;
     comments: string[];
+    liked: boolean; // Keep track of whether the user liked the game
 }
 
 const GameList: React.FC = () => {
@@ -18,9 +19,9 @@ const GameList: React.FC = () => {
 
     const fetchGames = async () => {
         try {
-            const response = await axios.get('http://10.2.3.46:5000/api/games');
+            const response = await axios.get('http://10.2.3.46:5000/api/games', { withCredentials: true });
             setGames(response.data);
-            setError(null); // Clear any previous error
+            setError(null);
         } catch (err) {
             console.error('Error fetching games:', err);
             setError('Failed to fetch games. Please try again later.');
@@ -34,7 +35,7 @@ const GameList: React.FC = () => {
     }, []);
 
     const handleGameAction = async (
-        action: 'like' | 'download' | 'comment',
+        action: 'like' | 'unlike' | 'download' | 'comment',
         id: number,
         comment?: string
     ) => {
@@ -44,7 +45,7 @@ const GameList: React.FC = () => {
                     ? `http://10.2.3.46:5000/api/games/${id}/comments`
                     : `http://10.2.3.46:5000/api/games/${id}/${action}`;
             const payload = action === 'comment' ? { comment } : {};
-            const response = await axios.post(url, payload);
+            const response = await axios.post(url, payload, { withCredentials: true });
 
             if (response.status !== 200) {
                 throw new Error(`Failed to ${action} the game`);
@@ -58,17 +59,16 @@ const GameList: React.FC = () => {
     };
 
     const openModal = (game: Game) => setSelectedGame(game);
-
     const closeModal = () => setSelectedGame(null);
 
     if (loading) {
-        return <div>Loading...</div>; // Loading state
+        return <div>Loading...</div>;
     }
 
     return (
         <div className="game-list">
             <h1>Games</h1>
-            {error && <div className="error-message">{error}</div>} {/* Error message */}
+            {error && <div className="error-message">{error}</div>}
             <div className="game-boxes">
                 {games.map((game) => (
                     <div
@@ -77,7 +77,7 @@ const GameList: React.FC = () => {
                         onClick={() => openModal(game)}
                         role="button"
                         tabIndex={0}
-                        onKeyDown={(e) => e.key === 'Enter' && openModal(game)} // Accessibility improvement
+                        onKeyDown={(e) => e.key === 'Enter' && openModal(game)}
                     >
                         <h2>{game.name}</h2>
                         <p>Likes: {game.likes}</p>
@@ -90,7 +90,10 @@ const GameList: React.FC = () => {
                     game={selectedGame}
                     onClose={closeModal}
                     onLike={() => {
-                        handleGameAction('like', selectedGame.id);
+                        const action = selectedGame.liked ? 'unlike' : 'like';
+                        handleGameAction(action, selectedGame.id);
+                        // Update the local state to reflect the change
+                        setSelectedGame((prev) => (prev ? { ...prev, liked: !prev.liked } : null));
                         closeModal();
                     }}
                     onDownload={() => {

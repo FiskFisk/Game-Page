@@ -7,7 +7,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///games.db'  # Use SQLite for development
 app.secret_key = 'your_secret_key'  # Set a secret key for session management
 db = SQLAlchemy(app)
-CORS(app, supports_credentials=True)  # Enable CORS to allow cross-origin requests
+
+# Enable CORS to allow cross-origin requests
+CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "http://10.2.3.46:3000"}})
 
 # Define the User model
 class User(db.Model):
@@ -15,6 +17,7 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    likes = db.relationship('Like', backref='user', lazy=True)  # Relationship for likes
 
 # Define the Game model
 class Game(db.Model):
@@ -23,12 +26,19 @@ class Game(db.Model):
     likes = db.Column(db.Integer, default=0)
     downloads = db.Column(db.Integer, default=0)
     comments = db.relationship('Comment', backref='game', lazy=True)
+    liked_by = db.relationship('Like', backref='game', lazy=True)  # Relationship for likes
 
 # Define the Comment model
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     game_id = db.Column(db.Integer, db.ForeignKey('game.id'), nullable=False)
     content = db.Column(db.String(200), nullable=False)
+
+# Define the Like model
+class Like(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'), nullable=False)
 
 # Route to register a new user
 @app.route('/api/register', methods=['POST'])
@@ -79,16 +89,34 @@ def get_games():
         'name': game.name,
         'likes': game.likes,
         'downloads': game.downloads,
-        'comments': [comment.content for comment in game.comments]
+        'comments': [comment.content for comment in game.comments],
+        'liked': any(like.user_id == session.get('user_id') for like in game.liked_by)  # Check if user liked the game
     } for game in games])
 
-# Route to like a game
+# Route to like or unlike a game
 @app.route('/api/games/<int:game_id>/like', methods=['POST'])
 def like_game(game_id):
     game = Game.query.get_or_404(game_id)
-    game.likes += 1
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return jsonify({"message": "You need to be logged in to like a game."}), 401
+
+    # Check if the user already liked the game
+    existing_like = Like.query.filter_by(game_id=game.id, user_id=user_id).first()
+
+    if existing_like:
+        db.session.delete(existing_like)  # Unlike the game
+        game.likes -= 1
+        message = "Game unliked!"
+    else:
+        new_like = Like(user_id=user_id, game_id=game.id)
+        db.session.add(new_like)  # Like the game
+        game.likes += 1
+        message = "Game liked!"
+
     db.session.commit()
-    return jsonify(message="Game liked!")
+    return jsonify(message=message)
 
 # Route to download a game
 @app.route('/api/games/<int:game_id>/download', methods=['POST'])
