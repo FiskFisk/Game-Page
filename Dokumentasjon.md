@@ -158,7 +158,7 @@ Tower Defense-spillet er bygget rundt fem nøkkelfunksjoner som definerer sjange
 ---
 
 ## 📚 Ressurser
-- React + TypeScript Tutorial
+- [React + TypeScript Tutorial](https://github.com/FiskFisk/Hvordan-lage-en-applikasjon-i-React-Vue-SvelteKit)
 
 ---
 
