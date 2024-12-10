@@ -1,83 +1,169 @@
-# Terminoppgave 2024 Dokumentasjon
+# 🎮 Terminoppgave 2024: Spill og Game Page
 
-## Innhold
-Terminoppgaven min består av to deler: et spill og en game-page. Over tid har jeg laget flere spill her og der, for eksempel *Little Island Town*, som ble laget til en tidligere oppgave. Rundt to uker før vi startet på terminoppgaven begynte jeg på et annet spill, et tower defense-spill, som jeg også har inkludert i terminoppgaven. Jeg har brukt en del tid på dette spillet, mens resten av tiden har gått til utviklingen av game-pagen.
-
----
-
-## Spill: Tower Defense
-
-### Introduksjon
-Spillet startet med en enkel idé om hva det skulle være, og deretter bygde jeg videre på det. For et tower defense-spill trenger man hovedsakelig fem grunnleggende elementer for at det skal fungere:
-1. En måte å få units/towers.
-2. En måte å velge hvilke units man vil bruke.
-3. En måte å gå inn på et game-map.
-4. En måte å plassere units på game-mapet.
-5. Et fiendesystem.
-
----
-
-### Inventory og Units
-Jeg startet med å gi spilleren et inventory og en måte å få units/towers på. Jeg hentet inspirasjon fra nyere tower defense-spill, der spilleren bruker penger for å skape tilfeldige units. Dette førte til at penger også ble en del av spillet. Penger tjener man ved å spille på forskjellige game-maps.
+## 📋 Innhold
+1. [📖 Introduksjon](#-introduksjon)
+2. [🕹️ Spill: Tower Defense](#️-spill-tower-defense)
+   - [🔑 Grunnleggende Elementer](#-grunnleggende-elementer)
+   - [📦 Inventory og Units](#-inventory-og-units)
+   - [🗺️ Game Maps](#-game-maps)
+   - [👾 Fiendesystem](#-fiendesystem)
+   - [🌊 Waves](#-waves)
+   - [🎯 Unitangrep](#-unitangrep)
+3. [💻 Nettside: Game Page](#-nettside-game-page)
+   - [✨ Frontend-funksjoner](#-frontend-funksjoner)
+   - [🔧 Backend-funksjoner](#-backend-funksjoner)
+   - [🌐 Hosting](#-hosting)
+   - [🔑 Brukerautentisering](#-brukerautentisering)
+4. [📁 Katalogstruktur](#-katalogstruktur)
+5. [🚀 Videreutvikling](#-videreutvikling)
+6. [📚 Ressurser](#-ressurser)
 
 ---
 
-### Game Maps
-Jeg laget et system der spilleren kan klikke på en game-map-meny og velge fra tilgjengelige maps (foreløpig er det kun ett map). Når spilleren velger et map, transporteres de til en ny skjerm. For å overføre de valgte unitsene til den nye skjermen laget jeg et equip-system i inventoryet. Units som blir equipet lagres i en Equip Manager med en "Don't Destroy On Load"-funksjon, som sikrer at informasjonen overføres mellom scener.
+## 📖 Introduksjon
 
-Units kan plasseres på alle områder unntatt de som har en "Not-Plasable"-collider. De unitsene som plasseres får overført stats fra prefab-knappen til selve enheten på kartet. Jeg implementerte også en funksjon for å oppgradere units: Spilleren kan klikke på en unit, få opp dens stats, oppgraderingskostnad, og en knapp for oppgradering. Når man oppgraderer, brukes in-game penger, og unitens stats forbedres. Penger tjener man ved å fullføre waves.
+Denne terminoppgaven består av to deler:
+1. **Et spill** - Et Tower Defense-spill designet for å utforske mekanikkene i sjangeren.
+2. **En nettside** - En Game Page der brukere kan interagere med spillene ved å legge igjen likes, kommentarer og laste ned spillene.
 
----
-
-### Fiender
-Jeg startet med å lage prefabs for fiender med de nødvendige stats og scripts. For fiendens bevegelser la jeg punkter på kartet som fiendene beveger seg mot, i en bestemt rekkefølge. Det siste punktet har en kollisjonsboks som reduserer spillerens liv om fienden når fram. Dette førte til behovet for en HP Manager, som også fungerer som in-game pengesystem. Når en fiende dør, gir den penger som kan brukes til å kjøpe flere units. Hver fiende har egne stats for angrep og helse, som lagres i et Enemy Stats-script.
+Målet var å kombinere teknisk kompetanse med kreativ spillutvikling.
 
 ---
 
-### Waves
-Wave-systemet er foreløpig enkelt, men funksjonelt. Jeg kan spesifisere hvilke fiender og hvor mange som skal dukke opp i hver wave. Når alle fiender er drept, eller spilleren trykker på skip-knappen, starter neste wave. Spilleren får også en pengebonus for hver fullførte wave. "Sea Coins" er pengene som brukes til å kjøpe units, og de tjener man etter å ha vunnet eller tapt spillet. Beløpet avhenger av hvor mange waves man klarer.
+## 🕹️ Spill: Tower Defense
+
+### 🔑 Grunnleggende Elementer
+
+Tower Defense-spillet er bygget rundt fem nøkkelfunksjoner som definerer sjangeren:
+1. En mekanisme for å få **units/towers**.
+2. En metode for å **velge** hvilke units som skal brukes.
+3. Et system for å **gå inn på et game map**.
+4. En funksjon for å **plassere units** på kartet.
+5. Et **fiendesystem** for å utfordre spilleren.
 
 ---
 
-### Unit Angrep
-Til slutt implementerte jeg unit-angrep. Etter at en unit er plassert, mottar den statsene sine:
-- **Attack Damage**: Hvor mye skade uniten gjør.
-- **Range**: Rekkevidden til uniten.
-- **Attack Speed**: Hvor raskt uniten angriper.
-- **Upgrade Cost**: Kostnaden for å oppgradere uniten.
+### 📦 Inventory og Units
 
-Uniten lager en usynlig sirkel rundt seg basert på rekkevidden. Når en fiende kommer innenfor sirkelen, skyter uniten en kule som påfører fienden skade tilsvarende unitens Attack Damage. Attack Speed bestemmer hvor ofte uniten angriper; lavere tall betyr raskere angrep.
+- **Inventory** gir spilleren muligheten til å få units ved hjelp av in-game penger.
+- Units genereres tilfeldig basert på spillerens økonomi, inspirert av moderne tower defense-spill.
+- Spilleren tjener penger ved å spille og fullføre game maps.
 
 ---
 
-## Game Page: Nettside
+### 🗺️ Game Maps
 
-### Valg av Teknologi
-Jeg startet med å finne ut hva jeg skulle bruke for å lage nettsiden. Selv om HTML, CSS, og JavaScript var en mulighet, valgte jeg React og TypeScript fordi det er mer moderne og effektivt. Jeg begynte med en JavaScript-backend, men byttet senere til Python.
-
----
-
-### Frontend
-Jeg laget først en enkel React og TypeScript-nettside for frontend. Ved hjelp av min egen tutorial, tilgjengelig på [GitHub](https://github.com/FiskFisk/Hvordan-lage-en-applikasjon-i-React-Vue-SvelteKit/tree/main), satte jeg opp de nødvendige filene. **App.tsx** ble koblet til **GameList.tsx**, slik at nettsiden viste en liste med bokser for hvert spill. Når man klikker på en spillboks, vises en informasjonsboks via **GameModal.tsx**. Hver boks har sin egen unike informasjonsboks.
+1. **Kartvalg:** Spilleren kan velge fra en meny over tilgjengelige maps. Foreløpig er kun ett map tilgjengelig.
+2. **Overføring av units:** Brukeren velger units via et **equip-system**, som lagrer informasjonen i en **Equip Manager** med "Don't Destroy On Load"-funksjonalitet.
+3. **Plassering:** Units kan plasseres på tilgjengelige områder på kartet.
+4. **Oppgradering:** Spilleren kan oppgradere units med in-game penger for å forbedre stats.
 
 ---
 
-### Backend
-For å håndtere likes, nedlastinger, og kommentarer, trengte jeg en backend. Jeg brukte Python og SQL for å lage en database i **games.db**. **App.py** håndterer all backend-logikken og kobler til **GameModal.tsx**, slik at likes, nedlastinger og kommentarer lagres permanent i databasen.
+### 👾 Fiendesystem
+
+- **Fiendebevegelser:** Fiender navigerer mellom forhåndsdefinerte punkter. Når de når sluttpunktet, mister spilleren liv.
+- **Belønning:** Spilleren tjener penger ved å beseire fiender. Disse pengene brukes til å skaffe nye units.
+- **Fiendestats:** Hver fiende har egne stats for helse og skade.
 
 ---
 
-### Hosting
-Nettsiden var opprinnelig bare tilgjengelig lokalt, men ved hjelp av **app.py** kunne jeg koble frontend og backend sammen på en IP-adresse: `http://10.2.3.46`. Frontend kjører på port 3000 og backend på port 5000. Dermed kan nettsiden nås av alle på samme nettverk. Likes, kommentarer og nedlastinger oppdateres i sanntid for alle brukere.
+### 🌊 Waves
+
+- **Wave-design:** Hver wave består av forhåndsdefinerte fiender og mengder.
+- **Progressjon:** Etter at spilleren beseirer alle fiender eller trykker "skip", starter neste wave.
+- **Belønninger:** Spilleren får bonuspenger for fullførte waves og kan tjene "Sea Coins" avhengig av antall fullførte waves.
 
 ---
 
-### Logging
-Tidligere kunne brukere like spill så mange ganger de ville. For å løse dette la jeg til **AuthPanel.tsx**, som krever at brukere logger inn eller registrerer seg. På registreringssiden skriver man inn e-post, passord og brukernavn. Hvis registreringen er vellykket, blir man automatisk logget inn og sendt til game-pagen. Logginformasjonen lagres i SQL-databasen.
+### 🎯 Unitangrep
+
+- Hver unit har følgende stats:
+  - **Attack Damage:** Skaden per angrep.
+  - **Range:** Rekkevidde for angrep.
+  - **Attack Speed:** Hvor ofte uniten angriper (f.eks. 1 = 1 angrep per sekund, 0.5 = 2 angrep per sekund).
+- Units angriper fiender innenfor rekkevidden ved å skyte prosjektiler.
 
 ---
 
-## Funksjoner
-- Spillere kan kun like et spill én gang.
-- Brukernavnet vises øverst til høyre på nettsiden.
+## 💻 Nettside: Game Page
+
+### ✨ Frontend-funksjoner
+
+- **GameList.tsx:** Viser en liste med klikkbare spillbokser.
+- **GameModal.tsx:** Viser detaljer om hvert spill, inkludert:
+  - Likes: Dynamisk oppdatering ved brukerinteraksjon.
+  - Kommentarer: Lar brukere legge igjen kommentarer.
+  - Nedlastinger: En knapp for å laste ned spill.
+
+---
+
+### 🔧 Backend-funksjoner
+
+- **App.py:** Backend skrevet i Python som kobler frontend med en SQLite-database.
+- **Database:** Lagrer informasjon som:
+  - Antall likes.
+  - Nedlastinger.
+  - Kommentarer.
+- **API:** Håndterer kommunikasjonen mellom frontend og backend for sanntidsoppdateringer.
+
+---
+
+### 🌐 Hosting
+
+- **Frontend:** Kjører på `http://10.2.3.46:3000`.
+- **Backend:** Kjører på `http://10.2.3.46:5000`.
+- **Tilgang:** Nettsiden kan nås av alle på samme nettverk.
+
+---
+
+### 🔑 Brukerautentisering
+
+- **AuthPanel.tsx:** Krever at brukere logger inn eller registrerer seg.
+- **Registreringsprosess:**
+  - Brukeren fyller inn e-post, passord og brukernavn.
+  - Etter registrering logges brukeren inn automatisk.
+- **Etter innlogging:**
+  - Kun én like per spill per bruker.
+  - Brukernavnet vises øverst til høyre.
+
+---
+
+## 📁 Katalogstruktur
+
+```plaintext
+├── backend/
+│   ├── app.py
+│   ├── games.db
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx
+│   │   ├── GameList.tsx
+│   │   ├── GameModal.tsx
+│   │   ├── AuthPanel.tsx
+│   │   ├── styles/
+│   │   │   └── App.css
+│   └── public/
+│       └── index.html
+```
+
+---
+
+## 🚀 Videreutvikling
+- Legge til flere maps og fiendetyper i Tower Defense-spillet.
+- Utvikle et mer avansert wave-system.
+-- Utvide Game Page med spillvurderinger og personalisering.
+
+---
+
+## 📚 Ressurser
+- React + TypeScript Tutorial
+
+---
+
+## 🎉 Bonus
+- Spilleren kan kun like et spill én gang.
+- Brukernavnet vises i toppmenyen etter innlogging.
+
 
