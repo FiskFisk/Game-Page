@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import bcrypt
 
+# Initialize Flask app and database
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///games.db'  # Use SQLite for development
 app.secret_key = 'your_secret_key'  # Set a secret key for session management
@@ -94,29 +95,34 @@ def get_games():
     } for game in games])
 
 # Route to like or unlike a game
-@app.route('/api/games/<int:game_id>/like', methods=['POST'])
-def like_game(game_id):
+@app.route('/api/games/<int:game_id>/<action>', methods=['POST'])
+def like_game(game_id, action):
     game = Game.query.get_or_404(game_id)
     user_id = session.get('user_id')
 
     if not user_id:
-        return jsonify({"message": "You need to be logged in to like a game."}), 401
+        return jsonify({"message": "You need to be logged in to like or unlike a game."}), 401
 
-    # Check if the user already liked the game
     existing_like = Like.query.filter_by(game_id=game.id, user_id=user_id).first()
 
-    if existing_like:
-        db.session.delete(existing_like)  # Unlike the game
-        game.likes -= 1
-        message = "Game unliked!"
-    else:
+    if action == 'like':
+        if existing_like:
+            return jsonify({"message": "You already liked this game."}), 400
         new_like = Like(user_id=user_id, game_id=game.id)
-        db.session.add(new_like)  # Like the game
+        db.session.add(new_like)
         game.likes += 1
         message = "Game liked!"
+    elif action == 'unlike':
+        if existing_like:
+            db.session.delete(existing_like)
+            game.likes -= 1
+            message = "Game unliked!"
+        else:
+            return jsonify({"message": "You have not liked this game yet."}), 400
 
     db.session.commit()
     return jsonify(message=message)
+
 
 # Route to download a game
 @app.route('/api/games/<int:game_id>/download', methods=['POST'])

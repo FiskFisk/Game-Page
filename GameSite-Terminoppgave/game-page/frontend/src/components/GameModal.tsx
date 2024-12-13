@@ -28,6 +28,7 @@ interface GameModalProps {
     onComment: (comment: string) => void;
 }
 
+// GameModal.tsx
 const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload, onComment }) => {
     const [comment, setComment] = useState('');
 
@@ -75,7 +76,7 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
                 <List>
                     {game.comments.slice().reverse().map((c, index) => (
                         <ListItem key={index}>
-                            <Typography>{c}</Typography>
+                            <Typography>UserName ; {c}</Typography>
                         </ListItem>
                     ))}
                 </List>
@@ -88,5 +89,6 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
         </Dialog>
     );
 };
+
 
 export default GameModal;
