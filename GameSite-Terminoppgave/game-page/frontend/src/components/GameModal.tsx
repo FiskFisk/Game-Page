@@ -9,6 +9,8 @@ import {
     Typography,
     List,
     ListItem,
+    Divider,
+    Box,
 } from '@mui/material';
 
 interface Game {
@@ -29,14 +31,13 @@ interface GameModalProps {
     username: string | null; // Add username prop
 }
 
-// GameModal.tsx
 const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload, onComment, username }) => {
     const [comment, setComment] = useState('');
 
     const handleCommentSubmit = () => {
         if (comment.trim()) {
             // Include the username in the comment
-            onComment(`${comment}`);
+            onComment(`${username} : ${comment}`); // Add username to the comment
             setComment('');
         }
     };
@@ -49,14 +50,14 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
                 <Typography variant="body1">Downloads: {game.downloads}</Typography>
 
                 {/* Action buttons */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <Box display="flex" justifyContent="space-between" marginBottom={2}>
                     <Button variant="contained" color="primary" onClick={onLike}>
                         {game.liked ? '❤️' : '🤍'} {/* Filled or empty heart based on likes */}
                     </Button>
                     <Button variant="contained" color="secondary" onClick={onDownload}>
                         Download
                     </Button>
-                </div>
+                </Box>
 
                 {/* Comment input area */}
                 <TextField
@@ -69,7 +70,7 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
                     onChange={(e) => setComment(e.target.value)}
                     margin="normal"
                 />
-                <Button variant="contained" color="primary" onClick={handleCommentSubmit}>
+                <Button variant="contained" color="primary" onClick={handleCommentSubmit} style={{ marginBottom: '16px' }}>
                     Comment
                 </Button>
 
@@ -77,9 +78,12 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
                 <Typography variant="h6" style={{ marginTop: '16px' }}>Comments:</Typography>
                 <List>
                     {game.comments.slice().reverse().map((c, index) => (
-                        <ListItem key={index}>
-                            <Typography>{c}</Typography> {/* Display the full comment with username */}
-                        </ListItem>
+                        <div key={index}>
+                            <ListItem>
+                                <Typography variant="body2" style={{ whiteSpace: 'pre-wrap' }}>{c}</Typography> {/* Display the full comment */}
+                            </ListItem>
+                            {index < game.comments.length - 1 && <Divider />} {/* Add a divider between comments */}
+                        </div>
                     ))}
                 </List>
             </DialogContent>

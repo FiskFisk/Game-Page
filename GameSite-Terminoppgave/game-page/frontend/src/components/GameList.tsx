@@ -101,7 +101,7 @@ const GameList: React.FC<{ username: string | null }> = ({ username }) => {
                         closeModal();
                     }}
                     onComment={(comment: string) => {
-                        handleGameAction('comment', selectedGame.id, `${username}: ${comment}`); // Include username in comment
+                        handleGameAction('comment', selectedGame.id, comment); // Just pass the comment
                         closeModal();
                     }}
                     username={username} // Pass username to GameModal
