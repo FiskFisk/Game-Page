@@ -165,5 +165,7 @@ Tower Defense-spillet er bygget rundt fem nøkkelfunksjoner som definerer sjange
 ## 🎉 Bonus
 - Spilleren kan kun like et spill én gang.
 - Brukernavnet vises i toppmenyen etter innlogging.
+- Man kan unlike vis man trykker like igjen.
+- Brukernavn vil bli vist på kommentarer.
 
 
