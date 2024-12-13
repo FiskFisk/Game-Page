@@ -11,7 +11,7 @@ interface Game {
     liked: boolean; // Keep track of whether the user liked the game
 }
 
-const GameList: React.FC = () => {
+const GameList: React.FC<{ username: string | null }> = ({ username }) => {
     const [games, setGames] = useState<Game[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedGame, setSelectedGame] = useState<Game | null>(null);
@@ -101,9 +101,10 @@ const GameList: React.FC = () => {
                         closeModal();
                     }}
                     onComment={(comment: string) => {
-                        handleGameAction('comment', selectedGame.id, comment);
+                        handleGameAction('comment', selectedGame.id, `${username}: ${comment}`); // Include username in comment
                         closeModal();
                     }}
+                    username={username} // Pass username to GameModal
                 />
             )}
         </div>

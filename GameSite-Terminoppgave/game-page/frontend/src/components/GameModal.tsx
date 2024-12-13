@@ -16,7 +16,7 @@ interface Game {
     name: string;
     likes: number;
     downloads: number;
-    comments: string[];
+    comments: string[]; // List of comments
     liked: boolean; // Track whether the user liked the game
 }
 
@@ -26,15 +26,17 @@ interface GameModalProps {
     onLike: () => void;
     onDownload: () => void;
     onComment: (comment: string) => void;
+    username: string | null; // Add username prop
 }
 
 // GameModal.tsx
-const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload, onComment }) => {
+const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload, onComment, username }) => {
     const [comment, setComment] = useState('');
 
     const handleCommentSubmit = () => {
         if (comment.trim()) {
-            onComment(comment);
+            // Include the username in the comment
+            onComment(`${comment}`);
             setComment('');
         }
     };
@@ -76,7 +78,7 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
                 <List>
                     {game.comments.slice().reverse().map((c, index) => (
                         <ListItem key={index}>
-                            <Typography>UserName ; {c}</Typography>
+                            <Typography>{c}</Typography> {/* Display the full comment with username */}
                         </ListItem>
                     ))}
                 </List>
@@ -89,6 +91,5 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, onLike, onDownload
         </Dialog>
     );
 };
-
 
 export default GameModal;
