@@ -17,6 +17,7 @@
 4. [📁 Katalogstruktur](#-katalogstruktur)
 5. [🚀 Videreutvikling](#-videreutvikling)
 6. [📚 Ressurser](#-ressurser)
+7. [📝 Tilbakemeldinger](#-tilbakemeldinger)
 
 ---
 
@@ -167,5 +168,13 @@ Tower Defense-spillet er bygget rundt fem nøkkelfunksjoner som definerer sjange
 - Brukernavnet vises i toppmenyen etter innlogging.
 - Man kan unlike vis man trykker like igjen.
 - Brukernavn vil bli vist på kommentarer.
+
+---
+
+## 📝 Tilbakemeldinger
+- Implementere passordkryptering i databasen for å beskytte brukerpassordene.
+- Endre stil på nettsiden for å forbedre brukeropplevelsen.
+- Vise navnene på folk som kommenterer under kommentarene for bedre interaksjon.
+- Vurdere å legge til en funksjon for forbedrede tilbakemeldinger fra brukere for ytterligere forbedringer.
 
 
