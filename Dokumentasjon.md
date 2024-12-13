@@ -175,6 +175,5 @@ Tower Defense-spillet er bygget rundt fem nøkkelfunksjoner som definerer sjange
 - Implementere passordkryptering i databasen for å beskytte brukerpassordene.
 - Endre stil på nettsiden for å forbedre brukeropplevelsen.
 - Vise navnene på folk som kommenterer under kommentarene for bedre interaksjon.
-- Vurdere å legge til en funksjon for forbedrede tilbakemeldinger fra brukere for ytterligere forbedringer.
 
 
