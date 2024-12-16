@@ -154,7 +154,7 @@ Tower Defense-spillet er bygget rundt fem nøkkelfunksjoner som definerer sjange
 ## 🚀 Videreutvikling
 - Legge til flere maps og fiendetyper i Tower Defense-spillet.
 - Utvikle et mer avansert wave-system.
--- Utvide Game Page med spillvurderinger og personalisering.
+- Utvide Game Page med spillvurderinger og personalisering.
 
 ---
 
